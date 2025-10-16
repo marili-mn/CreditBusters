@@ -1,54 +1,6 @@
-class User {
-    constructor(id, name, lastname, email, password) {
-        this.id = id;
-        this.name = name;
-        this.lastname = lastname;
-        this.email = email;
-        this.password = password;
-    }
-}
-
-class UserDB {
-    constructor() {
-        this.dbName = 'creditbusters_users_db';
-        this.users = this._load();
-    }
-
-    _load() {
-        const usersJson = localStorage.getItem(this.dbName);
-        return usersJson ? JSON.parse(usersJson) : [];
-    }
-
-    _save() {
-        localStorage.setItem(this.dbName, JSON.stringify(this.users));
-    }
-
-    addUser({ name, lastname, email, password }) {
-        const id = Date.now().toString();
-        const newUser = new User(id, name, lastname, email, password);
-        this.users.push(newUser);
-        this._save();
-        return newUser;
-    }
-
-    findUserByEmail(email) {
-        return this.users.find(user => user.email.toLowerCase() === email.toLowerCase());
-    }
-
-    updateUserPassword(email, newPassword) {
-        const user = this.findUserByEmail(email);
-        if (user) {
-            user.password = newPassword;
-            this._save();
-            return true;
-        }
-        return false;
-    }
-}
-
 class App {
     constructor() {
-        this.db = new UserDB();
+        this.api = new Api();
         this._route();
         this._setupCommonListeners();
     }
@@ -71,29 +23,40 @@ class App {
         // Ya no se requiere autenticación aquí
     }
 
-    _setupDashboardPage() {
-        const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
-        if (!loggedInUser) {
+    async _setupDashboardPage() {
+        if (!this.api.token) {
             window.location.href = 'log-in.html';
             return;
         }
 
-        const welcomeEl = document.getElementById('welcome-message');
-        if (welcomeEl) {
-            welcomeEl.textContent = `Hola, ${loggedInUser.name}`;
-        }
+        try {
+            // Decode the token to get the user's email
+            const tokenPayload = JSON.parse(atob(this.api.token.split('.')[1]));
+            const userEmail = tokenPayload.email;
 
-        const userInfoEl = document.getElementById('user-info');
-        if (userInfoEl) {
-            const logoutBtn = document.createElement('button');
-            logoutBtn.textContent = 'Cerrar Sesión';
-            logoutBtn.className = 'btn btn-secondary';
-            logoutBtn.onclick = () => {
-                localStorage.removeItem('loggedInUser');
-                this._setFlashMessage('Has cerrado sesión.', 'success');
-                window.location.href = 'log-in.html';
-            };
-            userInfoEl.appendChild(logoutBtn);
+            // We need the user ID to fetch user data. The API does not provide it in the token.
+            // For now, we will just display the email from the token.
+            const welcomeEl = document.getElementById('welcome-message');
+            if (welcomeEl) {
+                welcomeEl.textContent = `Hola, ${userEmail}`;
+            }
+
+            const userInfoEl = document.getElementById('user-info');
+            if (userInfoEl) {
+                const logoutBtn = document.createElement('button');
+                logoutBtn.textContent = 'Cerrar Sesión';
+                logoutBtn.className = 'btn btn-secondary';
+                logoutBtn.onclick = () => {
+                    this.api.logout();
+                    this._setFlashMessage('Has cerrado sesión.', 'success');
+                    window.location.href = 'log-in.html';
+                };
+                userInfoEl.appendChild(logoutBtn);
+            }
+        } catch (error) {
+            console.error('Error setting up dashboard:', error);
+            this.api.logout();
+            window.location.href = 'log-in.html';
         }
     }
 
@@ -176,10 +139,8 @@ class App {
             const feedbackEl = form.email.nextElementSibling;
             if (!/.+@.+\..+/.test(form.email.value)) {
                 feedbackEl.textContent = 'Debe ser un email válido.'; state.email = false;
-            } else if (this.db.findUserByEmail(form.email.value)) {
-                feedbackEl.textContent = 'Este email ya está en uso.'; state.email = false;
             } else {
-                feedbackEl.textContent = 'Email disponible.'; state.email = true;
+                feedbackEl.textContent = 'Email válido.'; state.email = true;
             }
             feedbackEl.className = `form-feedback ${state.email ? 'valid' : 'invalid'}`;
             checkFormState();
@@ -218,57 +179,71 @@ class App {
 
         form.confirmPassword.addEventListener('input', validatePasswordsMatch);
 
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
             this._setLoading(form, true);
-            setTimeout(() => {
-                this.db.addUser({ name: form.name.value, lastname: form.lastname.value, email: form.email.value, password: form.password.value });
+            try {
+                const userData = {
+                    first_name: form.name.value,
+                    last_name: form.lastname.value,
+                    email: form.email.value,
+                    password: form.password.value,
+                };
+                await this.api.register(userData);
                 this._setFlashMessage('¡Registro Exitoso! Ahora puedes iniciar sesión.', 'success');
                 window.location.href = 'log-in.html';
-            }, 1000);
+            } catch (error) {
+                this._displayMessage(error.message, 'error');
+                this._setLoading(form, false);
+            }
         });
     }
 
     _setupLoginPage() {
         const form = document.getElementById('loginForm');
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
             this._setLoading(form, true);
 
-            setTimeout(() => {
+            try {
                 const email = form.email.value;
                 const password = form.password.value;
-                const user = this.db.findUserByEmail(email);
+                const data = await this.api.login(email, password);
 
-                if (user && user.password === password) {
-                    localStorage.setItem('loggedInUser', JSON.stringify({ email: user.email, name: user.name }));
-                    this._setFlashMessage(`¡Bienvenido de nuevo, ${user.name}!`, 'success');
-                    window.location.href = 'dashboard.html';
+                const tokenPayload = JSON.parse(atob(data.access_token.split('.')[1]));
+                const userRole = tokenPayload.role;
+
+                localStorage.setItem('userRole', userRole);
+
+                if (userRole === 'admin' || userRole === 'superadmin') {
+                    window.location.href = 'dashboard-admin.html';
                 } else {
-                    this._displayMessage('El email o la contraseña son incorrectos.', 'error');
-                    this._setLoading(form, false);
+                    window.location.href = 'dashboard.html';
                 }
-            }, 1000);
+                this._setFlashMessage(`¡Bienvenido de nuevo!`, 'success');
+            } catch (error) {
+                this._displayMessage(error.message, 'error');
+                this._setLoading(form, false);
+            }
         });
     }
 
     _setupRecoveryPage() {
         const form = document.getElementById('recoveryForm');
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
             this._setLoading(form, true);
 
-            setTimeout(() => {
+            try {
                 const email = form.email.value;
-                if (this.db.findUserByEmail(email)) {
-                    sessionStorage.setItem('recoveryEmail', email);
-                    this._setFlashMessage('Se ha enviado un enlace para restablecer tu contraseña.', 'success');
-                    window.location.href = 'reset-password.html';
-                } else {
-                    this._displayMessage('No se encontró ninguna cuenta con ese email.', 'error');
-                    this._setLoading(form, false);
-                }
-            }, 1000);
+                await this.api.requestPasswordReset(email);
+                sessionStorage.setItem('recoveryEmail', email);
+                this._setFlashMessage('Se ha enviado un enlace para restablecer tu contraseña.', 'success');
+                window.location.href = 'reset-password.html';
+            } catch (error) {
+                this._displayMessage(error.message, 'error');
+                this._setLoading(form, false);
+            }
         });
     }
 
@@ -320,18 +295,26 @@ class App {
         form.confirmPassword.addEventListener('input', validatePasswordsMatch);
         checkFormState();
 
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
             if (!state.passwordStrength || !state.passwordMatch) return;
 
             this._setLoading(form, true);
 
-            setTimeout(() => {
-                this.db.updateUserPassword(recoveryEmail, form.password.value);
+            try {
+                const resetCode = form.resetCode.value;
+                const newPassword = form.password.value;
+
+                await this.api.verifyResetCode(recoveryEmail, resetCode);
+                await this.api.resetPassword(recoveryEmail, resetCode, newPassword);
+
                 sessionStorage.removeItem('recoveryEmail');
                 this._setFlashMessage('Tu contraseña ha sido actualizada. Ahora puedes iniciar sesión.', 'success');
                 window.location.href = 'log-in.html';
-            }, 1000);
+            } catch (error) {
+                this._displayMessage(error.message, 'error');
+                this._setLoading(form, false);
+            }
         });
     }
 }
