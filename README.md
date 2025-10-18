@@ -18,7 +18,7 @@ Pasos para hacer funcionar al chatbot:
 
     --Se generará una nueva clave. Cópiala y guárdala en un lugar seguro. 
 
-3) Crear un archivo .env en el directorio raiz del proytecto.
+3) Crear un archivo .env en el directorio raiz del proyecto.
 
 4) En el archivo .env agregar la siguiente línea: GOOGLE_API_KEY=tu_clave_secreta_de_google_ai (Aqui va la Api Key otorgada por Google).
 
