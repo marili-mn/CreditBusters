@@ -1,24 +1,116 @@
 /* Estilos básicos para el chat */
+:root {
+    /* New Harmonized Palette */
+    --primary-color: #F25D27; /* Refined Orange */
+    --primary-hover: #D9501F;
+    --secondary-color: #007791; /* Professional Cyan-Blue */
+    
+    /* Light Theme */
+    --bg-color-light: #F8F9FA;
+    --card-bg-light: #FFFFFF;
+    --text-color-light: #212529;
+    --text-muted-light: #6c757d;
+    --border-color-light: #dee2e6;
+
+    /* Dark Theme (Also adjusted for harmony) */
+    --bg-color-dark: #1a202c;
+    --card-bg-dark: #2d3748;
+    --text-color-dark: #e2e8f0;
+    --text-muted-dark: #a0aec0;
+    --border-color-dark: #4a5568;
+
+    /* Default to Light Theme */
+    --bg-color: var(--bg-color-light);
+    --card-bg: var(--card-bg-light);
+    --text-color: var(--text-color-light);
+    --text-muted: var(--text-muted-light);
+    --border-color: var(--border-color-light);
+}
+
+body{
+    background-color: #212529;
+}
+
 body {
     font-family: sans-serif;
+    margin: 0;
+    padding: 0;
 }
-#chat-container {
+
+.chatContainer {
+    position:fixed;
+    background-color: var(--card-bg);
+    bottom: 20px;
+    left: 60px;
     width: 400px;
     margin: 50px auto;
-    border: 1px solid #ccc;
-    padding: 10px;
+    border: 4px solid var(--secondary-color);
+    padding: 20px;
+    border-radius: 15px;
 }
-#chat-box {
+
+.chatBox {
     height: 300px;
-    border: 1px solid #eee;
     overflow-y: scroll;
     padding: 5px;
     margin-bottom: 10px;
+    
 }
-#user-input {
+
+.userInput{
     width: 300px;
     padding: 8px;
+    border-radius: 15px;
+    border: 1px solid var(--text-color);
 }
-#send-btn {
+
+.userInput:focus{
+    outline: none;
+    border: 1px solid var(--text-color);
+}
+
+.sendBtn {
+    border-radius: 10px;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    border: 1px solid var(--secondary-color);
+    cursor: pointer;
+    width: 18%;
     padding: 8px;
+    transition: 0.3s;
+}
+
+.sendBtn:hover{
+    background-color: var(--secondary-color);
+    transition: 0.5s;
+}
+
+.chatBot{
+    position:fixed;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    width: 50px;
+    background-color: var(--secondary-color);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.chatBot i{
+    color: var(--bg-color-light);
+    font-size: 2rem;
+}
+
+.chatBot:hover{
+    scale: 1.1;
+    transition: 0.8s;
+}
+
+.oculto{
+    display: none;
 }
