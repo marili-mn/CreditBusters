@@ -218,6 +218,7 @@
                     home_title: 'Tu PYME merece <br> financiación sin <br> demoras.',
                     home_subtitle1: 'En CreditBuster eliminamos la burocracia para que tu negocio crezca sin limite.',
                     home_subtitle2: 'Solicita tu credito hoy mismo.',
+                    messageBot: "Hola!😄, soy BusterBot🤖 el asistente virtual de ⚡CreditBusters. Puedes pregúntarme sobre 'quiénes somos', 'requisitos', 'proceso', 'tiempo de respuesta', 'por qué creditbusters', 'tienen app', 'tasas', 'monto máximo', 'plazos de pago', 'se puede refinanciar', 'qué tipo de créditos ofrecen'.",
                     benefits_title: '¿Por qué CreditBusters?',
                     benefits_subtitle: 'Descubre cómo facilitamos el crecimiento de tu PYME.',
                     benefit1_title: 'Rapidez Inigualable',
@@ -261,6 +262,7 @@
                     home_title: 'Your SME deserves <br> financing without <br> delays.',
                     home_subtitle1: 'At CreditBuster, we eliminate bureaucracy so your business can grow without limits.',
                     home_subtitle2: 'Apply for your credit today.',
+                    messageBot: "Hello! 😄, I'm BusterBot 🤖, the virtual assistant for ⚡CreditBusters. You can ask me about 'who we are', 'requirements', 'process', 'response time', 'why CreditBusters', 'do they have an app', 'rates', 'maximum amount', 'payment terms', 'can I refinance', 'what types of loans do they offer'.",
                     benefits_title: 'Why CreditBusters?',
                     benefits_subtitle: 'Discover how we facilitate the growth of your SME.',
                     benefit1_title: 'Unmatched Speed',
@@ -451,6 +453,7 @@
             if(chatBox.textContent == ''){
                 const messageWelcome = document.createElement('p');
                 messageWelcome.textContent = messageOfWelcome;
+                messageWelcome.dataset.key = "messageBot";
                 messageWelcome.style.borderRadius = '15px';
                 messageWelcome.style.padding = '10px';
                 messageWelcome.style.backgroundColor = 'var(--bg-color)';
