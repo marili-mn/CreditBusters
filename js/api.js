@@ -2,7 +2,7 @@
 class Api {
     constructor() {
         this.baseUrl = 'https://creditsbuster.onrender.com/api';
-        this.token = localStorage.getItem('accessToken');
+        this.token = sessionStorage.getItem('accessToken');
     }
 
     async _fetch(endpoint, options = {}) {
@@ -51,7 +51,9 @@ class Api {
 
     logout() {
         this.token = null;
-        localStorage.removeItem('accessToken');
+        sessionStorage.removeItem('accessToken');
+        sessionStorage.removeItem('userRole');
+        sessionStorage.removeItem('userEmail');
     }
 
     async register(userData) {

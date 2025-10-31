@@ -10,45 +10,51 @@
 </head>
 <body>
     <div id="flash-message-container"></div>
+    <button id="theme-toggle" class="theme-toggle-btn">🌙 Modo Oscuro</button>
+    <button id="lang-toggle" class="language-toggle" aria-label="Change language">EN</button>
     <main class="auth-container">
         <section class="auth-card">
             <div class="auth-info">
                 <header class="auth-header">
                     <h1 class="logo">⚡ CreditBusters</h1>
-                    <h2>Ingresar a tu cuenta</h2>
-                    <p>Impulsamos tu PyME, respaldamos tus sueños.</p>
+                    <h2 data-key="login_title">Ingresar a tu cuenta</h2>
+                    <p data-key="login_subtitle">Impulsamos tu PyME, respaldamos tus sueños.</p>
                 </header>
                 <div class="auth-links">
-                    <p>¿No tienes cuenta? <a href="register-user.html">Regístrate</a></p>
-                    <a href="#" class="btn btn-secondary">Saber más</a>
+                    <p data-key="no_account_text">¿No tienes cuenta? <a href="register-user.html" data-key="register_link">Regístrate</a></p>
+                    <a href="#" class="btn btn-secondary" data-key="learn_more_link">Saber más</a>
                 </div>
             </div>
             <div class="auth-form-wrapper">
                 <form id="loginForm" class="auth-form" novalidate>
                     <div id="message-container"></div>
                     <div class="form-group">
-                        <label for="email">Email</label>
+                        <label for="email" data-key="email_label">Email</label>
                         <input type="email" id="email" name="email" required>
                     </div>
                     <div class="form-group">
-                        <label for="password">Contraseña</label>
+                        <label for="password" data-key="password_label">Contraseña</label>
                         <div class="input-group">
                             <input type="password" id="password" name="password" required>
                             <button type="button" class="btn-toggle-password" aria-label="Mostrar u ocultar contraseña"><i class="fas fa-eye"></i></button>
                         </div>
                     </div>
                     <div class="form-options">
-                        <a href="password-user.html">¿Olvidaste tu contraseña?</a>
+                        <a href="password-user.html" data-key="forgot_password_link">¿Olvidaste tu contraseña?</a>
                     </div>
                     <button type="submit" id="submit-btn" class="btn btn-primary">
-                        <span class="btn-text">Iniciar Sesión</span>
+                        <span class="btn-text" data-key="login_button">Iniciar Sesión</span>
                         <span class="spinner"></span>
                     </button>
                 </form>
             </div>
         </section>
     </main>
-    <script src="../js/api.js"></script>
+    <script src="../js/db.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/translations.js"></script>
+    <script src="../js/main.js"></script>
     <script src="../js/app.js"></script>
 </body>
 </html>

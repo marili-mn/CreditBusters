@@ -239,10 +239,113 @@ body.dark-theme .etiqueta-archivo:hover {
     }
 
 
-    .theme-toggle-btn {
-        padding: 8px 12px;
-        font-size: 0.8rem;
-        top: 15px;
-        right: 15px;
+        .theme-toggle-btn {
+
+
+            padding: 8px 12px;
+
+
+            font-size: 0.8rem;
+
+
+            top: 15px;
+
+
+            right: 15px;
+
+
+        }
+
+
     }
-}
+
+
+    
+
+
+    @media (max-width: 480px) {
+
+
+        .form-container {
+
+
+            padding: 20px 10px;
+
+
+        }
+
+
+        h2 {
+
+
+            font-size: 1.5rem;
+
+
+        }
+
+
+    }
+    
+    /* --- ESTILOS PÁGINA DE FIRMA --- */
+    .signature-page-body {
+        align-items: center; /* Centra el contenedor verticalmente */
+    }
+    
+    .signature-container {
+        max-width: 600px; /* Ancho más adecuado para la firma */
+        text-align: center;
+    }
+    
+    .credit-summary-box {
+        background-color: var(--color-fondo-input);
+        border: 1px solid var(--color-borde);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        text-align: left;
+    }
+    
+    .credit-summary-box h4 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        color: var(--color-corporativo);
+        border-bottom: 1px solid var(--color-borde);
+        padding-bottom: 0.5rem;
+    }
+    
+    .credit-summary-box p {
+        margin: 0.5rem 0;
+        color: var(--color-texto-secundario);
+    }
+    
+    .credit-summary-box p strong {
+        color: var(--color-texto-principal);
+    }
+    
+    .signature-pad-wrapper {
+        border: 2px dashed var(--color-borde);
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        display: inline-block; /* Para que el borde se ajuste al canvas */
+        transition: border-color 0.3s ease;
+    }
+    
+    .signature-pad-wrapper:hover {
+        border-color: var(--color-corporativo);
+    }
+    
+    .signature-pad {
+        border-radius: 6px;
+        cursor: crosshair;
+    }
+    
+    .signature-actions {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+    
+    .signature-actions .btn {
+        flex: 1;
+        max-width: 200px;
+    }

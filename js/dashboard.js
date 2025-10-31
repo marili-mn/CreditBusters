@@ -1,56 +1,98 @@
-document.addEventListener('DOMContentLoaded', async () => {
-    const api = new Api();
-
-    const newCreditButton = document.querySelector('.btn-primary');
-    newCreditButton.addEventListener('click', () => {
-        window.location.href = 'form-data.html';
-    });
-
+document.addEventListener('DOMContentLoaded', function () {
+    const userSession = JSON.parse(sessionStorage.getItem('userSession'));
+    const welcomeMessage = document.getElementById('welcome-message');
     const creditList = document.querySelector('.credit-list');
 
-    try {
-        const credits = await api.getCredits();
-        creditList.innerHTML = ''; // Clear existing content
+    // Modal elements
+    const modal = document.getElementById('details-modal');
+    const modalBody = document.getElementById('modal-body');
+    const closeModalBtn = document.getElementById('close-modal');
 
-        if (credits.length === 0) {
-            creditList.innerHTML = '<p>No tienes solicitudes de crédito.</p>';
+    if (userSession) {
+        welcomeMessage.textContent = `Bienvenido, ${userSession.name}`;
+        loadCreditRequests(userSession.email);
+    } else {
+        window.location.href = 'log-in.html';
+        return;
+    }
+
+    function loadCreditRequests(userEmail) {
+        const allRequests = DB.getCreditRequests();
+        const userRequests = allRequests.filter(req => req.userEmail === userEmail);
+
+        creditList.innerHTML = ''; // Limpiar la lista antes de cargar
+
+        if (userRequests.length === 0) {
+            creditList.innerHTML = '<p>No tienes solicitudes de crédito todavía. ¡Anímate a solicitar uno!</p>';
             return;
         }
 
-        credits.forEach(credit => {
-            const creditCard = document.createElement('article');
-            creditCard.className = 'credit-card';
+        userRequests.forEach(request => {
+            const card = document.createElement('article');
+            card.className = 'credit-card';
 
-            let statusBadge;
-            switch (credit.status) {
-                case 'approved':
-                    statusBadge = '<span class="status-badge status-approved">Aprobado</span>';
-                    break;
-                case 'pending':
-                    statusBadge = '<span class="status-badge status-review">En Revisión</span>';
-                    break;
-                case 'rejected':
-                    statusBadge = '<span class="status-badge status-rejected">Rechazado</span>';
-                    break;
-                default:
-                    statusBadge = '<span class="status-badge">Desconocido</span>';
-            }
+            const statusClass = getStatusClass(request.status);
 
-            creditCard.innerHTML = `
+            card.innerHTML = `
                 <div class="credit-info">
-                    <h3>Crédito por ${credit.amount}</h3>
-                    <p>Monto: $${credit.amount.toLocaleString('es-AR')}</p>
-                    <p>Fecha: ${new Date().toLocaleDateString('es-AR')}</p> 
+                    <h3>${request.fullData.destino_credito}</h3>
+                    <p>Monto: $${parseFloat(request.fullData.monto_solicitado).toLocaleString('es-MX')}</p>
+                    <p>Fecha: ${new Date(request.timestamp).toLocaleDateString('es-ES')}</p>
                 </div>
                 <div class="credit-status">
-                    ${statusBadge}
-                    <a href="#" class="btn btn-secondary">Ver Detalles</a>
+                    <span class="status-badge ${statusClass}">${request.status}</span>
+                    <button class="btn btn-secondary view-details-btn" data-id="${request.id}">Ver Detalles</button>
                 </div>
             `;
-            creditList.appendChild(creditCard);
+            creditList.appendChild(card);
         });
-    } catch (error) {
-        console.error('Error fetching credits:', error);
-        creditList.innerHTML = '<p>Error al cargar las solicitudes de crédito.</p>';
+    }
+
+    // Event listener for view details
+    creditList.addEventListener('click', function(e) {
+        if (e.target.classList.contains('view-details-btn')) {
+            const requestId = e.target.dataset.id;
+            showDetailsModal(requestId);
+        }
+    });
+
+    function showDetailsModal(requestId) {
+        const request = DB.getRequestById(requestId);
+        if (!request) return;
+
+        const data = request.fullData;
+        modalBody.innerHTML = `
+            <h3>Datos de la Empresa</h3>
+            <p><strong>Razón Social:</strong> ${data.razon_social}</p>
+            <p><strong>C.U.I.T.:</strong> ${data.cuit}</p>
+            
+            <h3>Detalles del Crédito</h3>
+            <p><strong>Monto Solicitado:</strong> $${parseFloat(data.monto_solicitado).toLocaleString('es-MX')}</p>
+            <p><strong>Plazo:</strong> ${data.plazo} meses</p>
+            <p><strong>Destino:</strong> ${data.destino_credito}</p>
+
+            <h3>Firma Digital</h3>
+            <div style="background-color: white; border: 1px solid #ccc; border-radius: 4px; padding: 10px; margin-top: 10px; display: inline-block;">
+                <img src="${request.signature}" alt="Firma Digital" style="width: 100%; max-width: 300px;">
+            </div>
+        `;
+        modal.style.display = 'flex';
+    }
+
+    // Close modal logic
+    closeModalBtn.addEventListener('click', () => modal.style.display = 'none');
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+
+    function getStatusClass(status) {
+        switch (status) {
+            case 'Aprobado': return 'status-approved';
+            case 'En Revisión': return 'status-review';
+            case 'Rechazado': return 'status-rejected';
+            default: return 'status-pending';
+        }
     }
 });

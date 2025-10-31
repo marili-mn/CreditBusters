@@ -12,81 +12,45 @@
     <link rel="stylesheet" href="../css/dashboard-styles.css">
 </head>
 <body>
-    <button><a href="./dashboard-admin.html">ADMIN</a></button>
     <div class="dashboard-container">
         <header class="dashboard-header">
-            <h1>Mis Créditos</h1>
+            <h1 data-key="my_credits_title">Mis Créditos</h1>
             <div id="user-info">
                 <span id="welcome-message"></span>
-                <!-- El botón de cerrar sesión se inyectará aquí -->
+                <button id="logout" class="btn btn-danger" data-key="logout_button">Cerrar Sesión</button>
+                <button id="theme-toggle" class="theme-toggle-btn">🌙 Modo Oscuro</button>
+                <button id="lang-toggle" class="language-toggle" aria-label="Change language">EN</button>
             </div>
         </header>
 
         <section class="dashboard-actions">
-            <button class="btn btn-primary btn-lg">
+            <a href="./form-data.html" class="btn btn-primary btn-lg" data-key="new_credit_button">
                 <i class="fas fa-plus-circle"></i> Solicitar Nuevo Crédito
-            </button>
+            </a>
         </section>
 
         <main>
-            <h2>Mis Solicitudes</h2>
+            <h2 data-key="my_requests_title">Mis Solicitudes</h2>
             <div class="credit-list">
-                <!-- Ejemplo 1: Aprobado -->
-                <article class="credit-card">
-                    <div class="credit-info">
-                        <h3>Crédito para Expansión</h3>
-                        <p>Monto: $50,000.00</p>
-                        <p>Fecha: 15/08/2025</p>
-                    </div>
-                    <div class="credit-status">
-                        <span class="status-badge status-approved">Aprobado</span>
-                        <a href="#" class="btn btn-secondary">Ver Detalles</a>
-                    </div>
-                </article>
-
-                <!-- Ejemplo 2: En Revisión -->
-                <article class="credit-card">
-                    <div class="credit-info">
-                        <h3>Capital de Trabajo</h3>
-                        <p>Monto: $25,000.00</p>
-                        <p>Fecha: 01/10/2025</p>
-                    </div>
-                    <div class="credit-status">
-                        <span class="status-badge status-review">En Revisión</span>
-                        <a href="#" class="btn btn-secondary">Ver Detalles</a>
-                    </div>
-                </article>
-
-                <!-- Ejemplo 3: Requiere Documentación -->
-                <article class="credit-card">
-                    <div class="credit-info">
-                        <h3>Compra de Maquinaria</h3>
-                        <p>Monto: $120,000.00</p>
-                        <p>Fecha: 28/09/2025</p>
-                    </div>
-                    <div class="credit-status">
-                        <span class="status-badge status-pending">Requiere Documentación</span>
-                        <a href="#" class="btn btn-secondary">Completar</a>
-                    </div>
-                </article>
-                
-                <!-- Ejemplo 4: Rechazado -->
-                <article class="credit-card">
-                    <div class="credit-info">
-                        <h3>Línea de Crédito Rotativa</h3>
-                        <p>Monto: $75,000.00</p>
-                        <p>Fecha: 05/09/2025</p>
-                    </div>
-                    <div class="credit-status">
-                        <span class="status-badge status-rejected">Rechazado</span>
-                        <a href="#" class="btn btn-secondary">Ver Motivo</a>
-                    </div>
-                </article>
+                <!-- Las solicitudes de crédito se cargarán aquí dinámicamente -->
             </div>
         </main>
     </div>
-    <script src="../js/api.js"></script>
-    <script src="../js/app.js"></script>
+
+    <!-- Modal para ver detalles -->
+    <div id="details-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <button id="close-modal" class="modal-close-btn">&times;</button>
+            <h2 data-key="modal_title">Detalles de la Solicitud</h2>
+            <div id="modal-body" class="modal-body"></div>
+        </div>
+    </div>
+
+    <script src="../js/db.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/translations.js"></script>
+    <script src="../js/main.js"></script>
     <script src="../js/dashboard.js"></script>
 </body>
 </html>

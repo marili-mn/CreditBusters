@@ -8,6 +8,7 @@
     /* Light Theme */
     --bg-color-light: #F8F9FA;
     --card-bg-light: #FFFFFF;
+    --card-bg-light-rgb: 255, 255, 255;
     --text-color-light: #212529;
     --text-muted-light: #6c757d;
     --border-color-light: #dee2e6;
@@ -22,17 +23,21 @@
     /* Default to Light Theme */
     --bg-color: var(--bg-color-light);
     --card-bg: var(--card-bg-light);
+    --card-bg-rgb: var(--card-bg-light-rgb);
     --text-color: var(--text-color-light);
     --text-muted: var(--text-muted-light);
     --border-color: var(--border-color-light);
+    --section-bg-opacity: 0.95;
 }
 
-body.dark-mode {
+body.dark-theme {
     --bg-color: var(--bg-color-dark);
     --card-bg: var(--card-bg-dark);
+    --card-bg-rgb: var(--card-bg-dark-rgb);
     --text-color: var(--text-color-dark);
     --text-muted: var(--text-muted-dark);
     --border-color: var(--border-color-dark);
+    --section-bg-opacity: 0.98;
 }
 
 *{
@@ -49,9 +54,50 @@ body{
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* --- Scroll Reveal Animation --- */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 a{
     text-decoration: none;
     color: var(--primary-color);
+}
+
+/* --- Video Background --- */
+.video-background-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.video-background-container iframe {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100vw;
+    height: 56.25vw; /* 16:9 aspect ratio */
+    min-height: 100vh;
+    min-width: 177.77vh; /* 16:9 aspect ratio */
+    transform: translate(-50%, -50%);
+    pointer-events: none; /* Allows clicking through the video */
+}
+
+/* Add an overlay to make text more readable */
+.sectionHome {
+    position: relative;
+    background-color: rgba(0, 0, 0, 0.6);
 }
 
 
@@ -230,13 +276,15 @@ header .logo {
     line-height: 1.2;
     margin-bottom: 20px;
     font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    color: var(--text-color-dark);
 }
 
 .sectionHome p {
     font-size: 1.2em;
     line-height: 1.6;
     margin-bottom: 10px;
-    color: var(--text-muted);
+    color: var(--text-color-dark);
 }
 
 .sectionHome img{
@@ -250,7 +298,7 @@ header .logo {
 /* --------------------------------------------ESTILOS SECTION NUESTROS BENEFICIOS--------------------------------------------- */
 
 .sectionOurBeneficies {
-    background-color: var(--card-bg);
+    background-color: rgba(var(--card-bg-rgb), var(--section-bg-opacity));
     padding: 80px 5%;
     text-align: center;
 }
@@ -325,6 +373,7 @@ header .logo {
 
 /* --------------------------------------------ESTILOS SECTION SOBRE NOSOTROS--------------------------------------------- */
 .sectionAboutUs {
+    background-color: rgba(var(--card-bg-rgb), var(--section-bg-opacity));
     padding: 80px 20px;
     display: flex;
     width: 100%;
@@ -481,6 +530,7 @@ header .logo {
 
 /* --------------------------------------------ESTILOS SECTION CONTACTO--------------------------------------------- */
 .section-contact {
+    background-color: rgba(var(--card-bg-rgb), var(--section-bg-opacity));
     padding: 80px 5%;
 }
 .section-title {
@@ -708,5 +758,31 @@ header .logo {
 
     .btn-primary, .btn-secondary{
         text-align: center;
+    }
+}
+
+/* Further adjustments for very small screens */
+@media (max-width: 480px) {
+    .sectionHome h1 {
+        font-size: 2rem;
+    }
+    .sectionHome p {
+        font-size: 1rem;
+    }
+    .sectionOurBeneficies h2, .section-title h2, .sectionAboutUs h2 {
+        font-size: 1.8rem;
+    }
+    .subtitle {
+        font-size: 1.1rem;
+    }
+    .contact-container {
+        padding: 2rem 1.5rem;
+    }
+    .value-item {
+        height: 110px;
+        width: 110px;
+    }
+    .value-item .icon {
+        font-size: 1.8em;
     }
 }

@@ -9,6 +9,9 @@
     <title>CreditBusters</title>
 </head>
 <body>
+    <div class="video-background-container">
+        <iframe src="https://www.youtube.com/embed/C3iHAgwIYtI?autoplay=1&mute=1&loop=1&playlist=C3iHAgwIYtI&controls=0&showinfo=0&modestbranding=1&iv_load_policy=3" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
     <button id="btn-subir" title="Subir" class="btn-subir">↑</button>
     <header id="main-header">
         <h1 class="logo">⚡ CreditBusters</h1>
@@ -36,17 +39,17 @@
     </header>
 
     <main>
-        <section id="sectionHome" class="sectionHome">
+        <section id="sectionHome" class="sectionHome reveal">
             <div>
                 <h1 data-key="home_title">Tu PYME merece <br> financiación sin <br> demoras.</h1>
                 <p data-key="home_subtitle1">En CreditBuster eliminamos la burocracia para que tu negocio crezca sin limite.</p>
                 <p data-key="home_subtitle2">Solicita tu credito hoy mismo.</p>
             </div>
 
-            <img src="images/imgSectionHome.png" alt="image of section home">
+            
         </section>
 
-        <section id="sectionOurBeneficies" class="sectionOurBeneficies">
+        <section id="sectionOurBeneficies" class="sectionOurBeneficies reveal">
             <div class="containerBeneficies">
                 <h2 data-key="benefits_title">¿Por qué CreditBusters?</h2>
                 <p class="subtitle" data-key="benefits_subtitle">Descubre cómo facilitamos el crecimiento de tu PYME.</p>
@@ -85,7 +88,7 @@
             </div>
         </section>
 
-        <section id="sectionAboutUs" class="sectionAboutUs">
+        <section id="sectionAboutUs" class="sectionAboutUs reveal">
             <div class="containerAboutUsInfoText">
                 <h2 data-key="aboutUsTittle">CreditBusters: Impulsando el Corazón de tu Negocio</h2>
                 
@@ -123,7 +126,7 @@
         </section>
 
 
-        <section id="contactSection" class="section-contact">
+        <section id="contactSection" class="section-contact reveal">
             <div class="section-title">
                 <h2 data-key="contact_title">Contáctanos</h2>
                 <p data-key="contact_subtitle">¿Tienes alguna pregunta? Estamos aquí para ayudarte.</p>
@@ -163,39 +166,21 @@
         </div>
     </footer>
 
+        </div>
+    </footer>
+
+    <script src="js/theme.js"></script>
+    <script src="js/home.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const hamburger = document.getElementById('hamburgerMenu');
             const navMenu = document.getElementById('nav-menu');
-            const header = document.getElementById('main-header');
-            const themeToggle = document.getElementById('theme-toggle');
-            const themeIcon = themeToggle.querySelector('i');
             const langToggle = document.getElementById('lang-toggle');
 
             // Hamburger Menu
             if (hamburger && navMenu) {
                 hamburger.addEventListener('click', () => {
                     navMenu.classList.toggle('active');
-                });
-            }
-
-            // Theme Toggle
-            const applyTheme = (theme) => {
-                if (theme === 'dark') {
-                    document.body.classList.add('dark-mode');
-                    if (themeIcon) themeIcon.classList.replace('fa-moon', 'fa-sun');
-                } else {
-                    document.body.classList.remove('dark-mode');
-                    if (themeIcon) themeIcon.classList.replace('fa-sun', 'fa-moon');
-                }
-            };
-
-            if (themeToggle) {
-                themeToggle.addEventListener('click', () => {
-                    const isDark = document.body.classList.contains('dark-mode');
-                    const newTheme = isDark ? 'light' : 'dark';
-                    localStorage.setItem('theme', newTheme);
-                    applyTheme(newTheme);
                 });
             }
 
@@ -311,11 +296,24 @@
                 });
             }
 
-            // Load initial theme and language
-            const savedTheme = localStorage.getItem('theme') || 'light';
+            // Load initial language
             const savedLang = localStorage.getItem('language') || 'es';
-            applyTheme(savedTheme);
             setLanguage(savedLang);
+
+            // Scroll Reveal Logic
+            const revealElements = document.querySelectorAll('.reveal');
+            const revealOnScroll = () => {
+                const windowHeight = window.innerHeight;
+                revealElements.forEach(el => {
+                    const elementTop = el.getBoundingClientRect().top;
+                    if (elementTop < windowHeight - 100) { // 100px buffer
+                        el.classList.add('active');
+                    }
+                });
+            };
+
+            window.addEventListener('scroll', revealOnScroll);
+            revealOnScroll(); // Initial check
         });
 
         // MANEJO DE EVENTO SUBMIT EN FORMULARIO DE CONTACTO

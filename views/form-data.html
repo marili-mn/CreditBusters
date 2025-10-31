@@ -9,23 +9,26 @@
 </head>
 
 <body>
-    <button id="theme-toggle" class="theme-toggle-btn">
-        ☀️ Modo Claro </button>
+    <button id="theme-toggle" class="theme-toggle-btn">🌙 Modo Oscuro</button>
+    <button id="lang-toggle" class="language-toggle" aria-label="Change language">EN</button>
     <div class="form-container">
-        <h2>Nuevo Crédito | <span style="color: #ff5722;"> CreditBusters </span> </h2>
-        <form action="/inscripcion" method="POST">
+        <div class="form-header">
+            <h2 data-key="form_title">Nuevo Crédito | <span style="color: #ff5722;"> CreditBusters </span> </h2>
+            <button id="autoFillButton" class="btn btn-secondary" data-key="autofill_button">Autocompletar con datos de prueba</button>
+        </div>
+        <div id="credit-form">
 
             <h3
-                style="color: var(--color-corporativo); border-bottom: 1px solid var(--color-borde); padding-bottom: 5px;">
+                style="color: var(--color-corporativo); border-bottom: 1px solid var(--color-borde); padding-bottom: 5px;" data-key="company_data_title">
                 1. Datos de la Empresa</h3>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="razon_social">Razón Social Completa</label>
+                    <label for="razon_social" data-key="company_name_label">Razón Social Completa</label>
                     <input type="text" id="razon_social" name="razon_social" required>
                 </div>
                 <div class="form-group">
-                    <label for="cuit">C.U.I.T.</label>
+                    <label for="cuit" data-key="cuit_label">C.U.I.T.</label>
                     <input type="text" id="cuit" name="cuit" pattern="\d{2}-?\d{8}-?\d{1}" title="Formato XX-XXXXXXXX-X"
                         required>
                 </div>
@@ -33,28 +36,28 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="forma_juridica">Forma Jurídica</label>
+                    <label for="forma_juridica" data-key="legal_form_label">Forma Jurídica</label>
                     <select id="forma_juridica" name="forma_juridica" required>
-                        <option value="">Seleccione...</option>
-                        <option value="SA">Sociedad Anónima (S.A.)</option>
-                        <option value="SRL">Sociedad de Responsabilidad Limitada (S.R.L.)</option>
-                        <option value="SAS">Sociedad por Acciones Simplificada (S.A.S.)</option>
-                        <option value="OTRA">Otra</option>
+                        <option value="" data-key="select_option">Seleccione...</option>
+                        <option value="SA" data-key="legal_form_sa">Sociedad Anónima (S.A.)</option>
+                        <option value="SRL" data-key="legal_form_srl">Sociedad de Responsabilidad Limitada (S.R.L.)</option>
+                        <option value="SAS" data-key="legal_form_sas">Sociedad por Acciones Simplificada (S.A.S.)</option>
+                        <option value="OTRA" data-key="legal_form_other">Otra</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="clae">Actividad Principal</label>
-                    <input type="text" id="clae" name="clae" placeholder="Ej: Intermediación Financiera" required>
+                    <label for="clae" data-key="main_activity_label">Actividad Principal</label>
+                    <input type="text" id="clae" name="clae" data-key-placeholder="main_activity_placeholder" placeholder="Ej: Intermediación Financiera" required>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="email">E-mail Corporativo</label>
+                    <label for="email" data-key="corporate_email_label">E-mail Corporativo</label>
                     <input type="email" id="email" name="email" required>
                 </div>
                 <div class="form-group">
-                    <label for="telefono">Teléfono de Contacto</label>
+                    <label for="telefono" data-key="contact_phone_label">Teléfono de Contacto</label>
                     <input type="tel" id="telefono" name="telefono" placeholder="+54 9 11 xxxx-xxxx" required>
                 </div>
             </div>
@@ -62,66 +65,66 @@
             <hr style="border-top: 1px solid var(--color-borde); margin: 30px 0;">
 
             <h3
-                style="color: var(--color-corporativo); border-bottom: 1px solid var(--color-borde); padding-bottom: 5px;">
+                style="color: var(--color-corporativo); border-bottom: 1px solid var(--color-borde); padding-bottom: 5px;" data-key="fiscal_address_title">
                 2. Domicilio Fiscal</h3>
 
             <div class="form-row">
                 <div class="form-group" style="flex: 0.6;">
-                    <label for="calle">Calle y Número</label>
+                    <label for="calle" data-key="street_address_label">Calle y Número</label>
                     <input type="text" id="calle" name="calle" required>
                 </div>
                 <div class="form-group" style="flex: 0.4;">
-                    <label for="piso_dpto">Piso/Dpto. (Opcional)</label>
+                    <label for="piso_dpto" data-key="floor_apt_label">Piso/Dpto. (Opcional)</label>
                     <input type="text" id="piso_dpto" name="piso_dpto">
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="pais">País</label>
+                    <label for="pais" data-key="country_label">País</label>
                     <input type="text" id="pais" name="pais" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="provincia">Provincia / Estado </label>
+                    <label for="provincia" data-key="state_label">Provincia / Estado </label>
                     <input type="text" id="provincia" name="provincia" required>
                 </div>
                 <div class="form-group">
-                    <label for="ciudad">Ciudad / Localidad</label>
+                    <label for="ciudad" data-key="city_label">Ciudad / Localidad</label>
                     <input type="text" id="ciudad" name="ciudad" required>
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="cp">Código Postal</label>
+                <label for="cp" data-key="zip_code_label">Código Postal</label>
                 <input type="text" id="cp" name="cp" required>
             </div>
 
             <hr style="border-top: 1px solid var(--color-borde); margin: 30px 0;">
 
             <h3
-                style="color: var(--color-corporativo); border-bottom: 1px solid var(--color-borde); padding-bottom: 5px;">
+                style="color: var(--color-corporativo); border-bottom: 1px solid var(--color-borde); padding-bottom: 5px;" data-key="credit_request_title">
                 3. Solicitud de Crédito</h3>
             <div class="form-row">
                 <div class="form-group">
-                    <label for="monto_solicitado">Monto Solicitado ($)</label>
+                    <label for="monto_solicitado" data-key="requested_amount_label">Monto Solicitado ($)</label>
                     <input type="number" id="monto_solicitado" name="monto_solicitado" min="0" required>
                 </div>
                 <div class="form-group">
-                    <label for="plazo">Plazo Estimado (meses)</label>
+                    <label for="plazo" data-key="term_label">Plazo Estimado (meses)</label>
                     <input type="number" id="plazo" name="plazo" min="1" required>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="destino_credito">Destino del Crédito</label>
+                    <label for="destino_credito" data-key="credit_destination_label">Destino del Crédito</label>
                     <input type="text" id="destino_credito" name="destino_credito"
-                        placeholder="Ej: compra de maquinaria, capital de trabajo..." required>
+                        data-key-placeholder="credit_destination_placeholder" placeholder="Ej: compra de maquinaria, capital de trabajo..." required>
                 </div>
                 <div class="form-group">
-                    <label for="garantias">Garantías Ofrecidas (opcional)</label>
-                    <input type="text" id="garantias" name="garantias" placeholder="Ej: bienes, aval, etc.">
+                    <label for="garantias" data-key="guarantees_label">Garantías Ofrecidas (opcional)</label>
+                    <input type="text" id="garantias" name="garantias" data-key-placeholder="guarantees_placeholder" placeholder="Ej: bienes, aval, etc.">
                 </div>
             </div>
 
@@ -133,32 +136,32 @@
             <!-- PARTE OPCIONAL -- A VERIFICAR -->
 
             <h3
-                style="color: var(--color-corporativo); border-bottom: 1px solid var(--color-borde); padding-bottom: 5px;">
+                style="color: var(--color-corporativo); border-bottom: 1px solid var(--color-borde); padding-bottom: 5px;" data-key="economic_summary_title">
                 4. Resumen Económico (Último Ejercicio)</h3>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="cierre_ejercicio">Fecha Cierre de Ejercicio</label>
+                    <label for="cierre_ejercicio" data-key="fiscal_year_end_label">Fecha Cierre de Ejercicio</label>
                     <input type="date" id="cierre_ejercicio" name="cierre_ejercicio" required>
                 </div>
                 <div class="form-group">
-                    <label for="ventas_anuales">Ventas Netas Anuales ($)</label>
+                    <label for="ventas_anuales" data-key="annual_sales_label">Ventas Netas Anuales ($)</label>
                     <input type="number" id="ventas_anuales" name="ventas_anuales" min="0" required>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="activo_total">Activo Total ($)</label>
+                    <label for="activo_total" data-key="total_assets_label">Activo Total ($)</label>
                     <input type="number" id="activo_total" name="activo_total" min="0" required>
                 </div>
                 <div class="form-group">
-                    <label for="empleados">Cant. de Empleados</label>
+                    <label for="empleados" data-key="employees_label">Cant. de Empleados</label>
                     <input type="number" id="empleados" name="empleados" min="1" required>
                 </div>
             </div>
 
-            <label for="documento">Adjuntar Documento (Imagen o PDF):</label>
+            <label for="documento" data-key="document_label">Adjuntar Documento (Imagen o PDF):</label>
             <input type="file" id="documento" name="documento" accept=".pdf, .jpg, .jpeg, .png">
 
             <hr style="border-top: 1px solid var(--color-borde); margin: 30px 0;">
@@ -167,33 +170,37 @@
 
 
             <h3
-                style="color: var(--color-corporativo); border-bottom: 1px solid var(--color-borde); padding-bottom: 5px;">
+                style="color: var(--color-corporativo); border-bottom: 1px solid var(--color-borde); padding-bottom: 5px;" data-key="declarations_title">
                 5. Declaraciones</h3>
 
 
             <div class="checkbox-group">
                 <div class="form-group">
                     <input type="checkbox" id="declaracion_jurada" name="declaracion_jurada" required>
-                    <label for="declaracion_jurada">Declaro bajo juramento que los datos proporcionados son veraces y
+                    <label for="declaracion_jurada" data-key="sworn_declaration_label">Declaro bajo juramento que los datos proporcionados son veraces y
                         corresponden al último ejercicio cerrado.</label>
                 </div>
                 <div class="form-group">
                     <input type="checkbox" id="autorizacion" name="autorizacion" required>
-                    <label for="autorizacion">Autorizo a verificar la información ante organismos como AFIP, BCRA u
+                    <label for="autorizacion" data-key="authorization_label">Autorizo a verificar la información ante organismos como AFIP, BCRA u
                         otros registros pertinentes.</label>
                 </div>
                 <div class="form-group">
                     <input type="checkbox" id="tyc" name="tyc" required>
-                    <label for="tyc">He leído y acepto los <a href="#" style="color: var(--color-corporativo);">Términos
+                    <label for="tyc" data-key="terms_and_conditions_label">He leído y acepto los <a href="#" style="color: var(--color-corporativo);">Términos
                             y Condiciones de Inscripción.</a></label>
                 </div>
             </div>
 
-            <button type="submit" class="submit-btn">ENVIAR FORMULARIO</button>
-        </form>
+            <button id="submit-form" class="submit-btn" data-key="submit_button">GUARDAR Y CONTINUAR A LA FIRMA</button>
+        </div>
     </div>
 
-    <script src="../js/api.js"></script>
+    <script src="../js/db.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/translations.js"></script>
+    <script src="../js/main.js"></script>
     <script src="../js/formApp.js"></script>
 </body>
 

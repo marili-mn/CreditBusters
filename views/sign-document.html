@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firma de Documento - CreditBusters</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/form-style.css">
+    <style>
+        .signature-pad {
+            border: 2px dashed var(--color-borde);
+            border-radius: 8px;
+            cursor: crosshair;
+            margin-bottom: 1rem;
+        }
+        .signature-actions {
+            display: flex;
+            gap: 1rem;
+        }
+    </style>
+</head>
+<body class="signature-page-body">
+    <button id="theme-toggle" class="theme-toggle-btn">🌙 Modo Oscuro</button>
+    <button id="lang-toggle" class="language-toggle" aria-label="Change language">EN</button>
+    <div class="form-container signature-container">
+        <h2 data-key="sign_document_title">Firma de Solicitud de Crédito</h2>
+        <p data-key="sign_document_subtitle">Por favor, revise los detalles de su solicitud y firme en el recuadro a continuación para confirmar.</p>
+        
+        <div id="credit-summary" class="credit-summary-box">
+            <!-- El resumen del crédito se cargará aquí -->
+            <p data-key="loading_summary">Cargando resumen...</p>
+        </div>
+
+        <h3 style="margin-top: 2rem;" data-key="your_signature_title">Su Firma Digital</h3>
+        <div class="signature-pad-wrapper">
+            <canvas id="signature-pad" class="signature-pad" width="400" height="200"></canvas>
+        </div>
+        
+        <div class="signature-actions">
+            <button id="clear-signature" class="btn btn-secondary" data-key="clear_signature_button">Limpiar</button>
+            <button id="submit-signature" class="btn btn-primary" data-key="submit_signature_button">Firmar y Enviar Solicitud</button>
+        </div>
+        <div id="message-container" style="margin-top: 1rem;"></div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    <script src="../js/db.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/translations.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/theme.js"></script>
+    <script src="../js/signature.js"></script>
+</body>
+</html>

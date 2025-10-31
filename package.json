@@ -1,0 +1,25 @@
+{
+  "name": "creditbusters",
+  "version": "1.0.0",
+  "description": "CreditBusters es una aplicación web diseñada para agilizar el proceso de solicitud de créditos para PYMES. La aplicación cuenta con un panel de control para usuarios y un panel de administración para la gestión de solicitudes de crédito.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "lite-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marili-mn/CreditBusters.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/marili-mn/CreditBusters/issues"
+  },
+  "homepage": "https://github.com/marili-mn/CreditBusters#readme",
+  "devDependencies": {
+    "lite-server": "^2.6.1"
+  }
+}

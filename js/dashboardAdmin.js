@@ -1,217 +1,150 @@
-let companieActive = null;  
+document.addEventListener('DOMContentLoaded', function () {
+    const userSession = JSON.parse(sessionStorage.getItem('userSession'));
+    const welcomeMessage = document.getElementById('welcomeMessage');
+    const requestList = document.getElementById('request-list');
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
 
+    // Modal elements
+    const modal = document.getElementById('details-modal');
+    const modalBody = document.getElementById('modal-body');
+    const closeModalBtn = document.getElementById('close-modal');
 
-const api = new Api();
-
-//FUNCIONES DE UTILIDAD PARA LOCALSTORAGE
-
-async function getSolicitudes() {
-    try {
-        return await api.getCredits();
-    } catch (error) {
-        console.error('Error fetching credits:', error);
-        return [];
-    }
-}
-
-// 3. LÓGICA DE NAVEGACIÓN POR EMPRESA
-
-function updateActiveItem(clickedItem) {
-    const companyList = document.getElementById('companyList');
-    if (!companyList) return;
-
-    companyList.querySelectorAll('.company-item').forEach(item => {
-        item.classList.remove('active');
-    });
-    if (clickedItem) {
-        clickedItem.classList.add('active');
-    }
-}
-
-async function setuplistCompanies() {
-    const companyList = document.getElementById('companyList'); 
-    const allPymes = await api.getPymes();
-    
-    const companies = [...new Set(allPymes.map(pyme => pyme.name_company))].sort();
-    
-    companyList.innerHTML = ''; 
-
-    if (companies.length === 0) {
-        companyList.innerHTML = '<li class="company-item">No hay datos.</li>';
+    if (userSession) {
+        welcomeMessage.textContent = `Bienvenido, ${userSession.name}`;
+        loadAllRequests();
+    } else {
+        window.location.href = 'log-in.html';
         return;
     }
 
-    companies.forEach(empresa => {
-        const item = document.createElement('li');
-        item.className = 'company-item';
-        item.textContent = empresa;
-        item.dataset.empresa = empresa; 
+    searchInput.addEventListener('input', loadAllRequests);
+    statusFilter.addEventListener('change', loadAllRequests);
 
-        item.addEventListener('click', (event) => {
-            companieActive = empresa;
-            renderDashboard();
-            updateActiveItem(event.currentTarget);
+    function loadAllRequests() {
+        const allRequests = DB.getCreditRequests();
+        const searchTerm = searchInput.value.toLowerCase();
+        const status = statusFilter.value;
+
+        const filteredRequests = allRequests.filter(req => {
+            const companyName = req.fullData.razon_social || '';
+            const creditType = req.fullData.destino_credito || '';
+            const matchesSearch = companyName.toLowerCase().includes(searchTerm) || 
+                                  creditType.toLowerCase().includes(searchTerm);
+            const matchesStatus = status === 'all' || req.status === status;
+            return matchesSearch && matchesStatus;
         });
-        companyList.appendChild(item);
-    });
-}
 
-function setupSearchFilter() {
-    const searchInput = document.getElementById('searchCompany');
-    searchInput.addEventListener('input', (e) => {
-        const searchTerm = e.target.value.toLowerCase();
-        const companies = document.querySelectorAll('.company-item');
-
-        companies.forEach(company => {
-            const companyName = company.textContent.toLowerCase();
-            if (companyName.includes(searchTerm)) {
-                company.style.display = 'flex';
-            } else {
-                company.style.display = 'none';
-            }
-        });
-    });
-}
-
-//FUNCIONES PRINCIPALES DEL DASHBOARD
-
-
-async function renderDashboard() {
-    const dashboardContainer = document.getElementById('dashboardContainer');
-    const noDataMessage = document.getElementById('noDataMessage');
-    const empresaActualNombre = document.getElementById('empresa-actual-nombre');
-    
-    const allCredits = await getSolicitudes(); 
-    const allPymes = await api.getPymes();
-    dashboardContainer.innerHTML = ''; 
-
-    const pymesByName = allPymes.reduce((acc, pyme) => {
-        acc[pyme.name_company] = pyme;
-        return acc;
-    }, {});
-
-    const activePyme = pymesByName[companieActive];
-
-    const solicitudesFiltradas = activePyme ? allCredits.filter(credit => credit.pyme_id === activePyme.id) : [];
-    
-    empresaActualNombre.textContent = companieActive || "Sin Empresa Seleccionada";
-
-    if (!companieActive || solicitudesFiltradas.length === 0) {
-        noDataMessage.textContent = companieActive ? 
-            `No hay solicitudes para ${companieActive}.` :
-            'Seleccione una empresa en el menú lateral.';
-        noDataMessage.classList.remove('hidden');
-        noDataMessage.classList.add('messageInfo');
-        return;
+        renderRequests(filteredRequests);
     }
 
-    noDataMessage.classList.add('hidden');
-
-    solicitudesFiltradas.forEach(solicitud => {
-        const card = document.createElement('div');
-        card.className = 'applicationCard';
-        card.dataset.id = solicitud.id; 
-
-        let statusClass = '';
-        if (solicitud.status === 'approved') {
-            statusClass = 'statusApproved';
-        } else if (solicitud.status === 'rejected') {
-            statusClass = 'statusRejected';
-        } else {
-            statusClass = 'statusEarring';
+    function renderRequests(requests) {
+        requestList.innerHTML = '';
+        if (requests.length === 0) {
+            requestList.innerHTML = '<p>No se encontraron solicitudes que coincidan con los filtros.</p>';
+            return;
         }
 
-        const formatCurrency = (amount) => amount.toLocaleString('es-AR', { minimumFractionDigits: 2 });
+        requests.forEach(request => {
+            const card = document.createElement('div');
+            card.className = 'request-card';
+            const statusClass = getStatusClass(request.status);
 
-        const pymeData = allPymes.find(pyme => pyme.id === solicitud.pyme_id) || {};
+            card.innerHTML = `
+                <div class="request-info">
+                    <h3>${request.fullData.destino_credito}</h3>
+                    <p><strong>Empresa:</strong> ${request.fullData.razon_social}</p>
+                    <p><strong>Monto:</strong> $${parseFloat(request.fullData.monto_solicitado).toLocaleString('es-MX')}</p>
+                    <p><strong>Fecha:</strong> ${new Date(request.timestamp).toLocaleString('es-ES')}</p>
+                </div>
+                <div class="request-controls">
+                    <button class="btn btn-secondary view-details-btn" data-id="${request.id}">Ver Detalles</button>
+                    <select data-id="${request.id}" class="status-select">
+                        <option value="En Revisión" ${request.status === 'En Revisión' ? 'selected' : ''}>En Revisión</option>
+                        <option value="Aprobado" ${request.status === 'Aprobado' ? 'selected' : ''}>Aprobado</option>
+                        <option value="Rechazado" ${request.status === 'Rechazado' ? 'selected' : ''}>Rechazado</option>
+                    </select>
+                </div>
+                <div class="request-status-bar">
+                    <span class="status-badge ${statusClass}">${request.status}</span>
+                </div>
+            `;
+            requestList.appendChild(card);
+        });
+    }
 
+    // Event listener for status change and view details
+    requestList.addEventListener('click', function(e) {
+        if (e.target.classList.contains('view-details-btn')) {
+            const requestId = e.target.dataset.id;
+            showDetailsModal(requestId);
+        }
+    });
 
-        card.innerHTML = `
-            <h3>Solicitud #${solicitud.id} - ${pymeData.name_company}</h3>
+    requestList.addEventListener('change', function(e) {
+        if (e.target.classList.contains('status-select')) {
+            const requestId = e.target.dataset.id;
+            const newStatus = e.target.value;
+            DB.updateCreditRequestStatus(requestId, newStatus);
+            loadAllRequests(); // Recargar la lista para reflejar el cambio
+        }
+    });
+
+    function showDetailsModal(requestId) {
+        const request = DB.getRequestById(requestId);
+        if (!request) return;
+
+        const data = request.fullData;
+        modalBody.innerHTML = `
+            <h3>Datos de la Empresa</h3>
+            <p><strong>Razón Social:</strong> ${data.razon_social}</p>
+            <p><strong>C.U.I.T.:</strong> ${data.cuit}</p>
+            <p><strong>Forma Jurídica:</strong> ${data.forma_juridica}</p>
+            <p><strong>Actividad Principal:</strong> ${data.clae}</p>
             
-            <div class="infoContainer">
-                <div>
-                    <p>Razon Social: <b>${pymeData.legal_form}</b></p>
-                    <p>Forma Jurídica: ${pymeData.legal_form}</p>
-                    <p>Email: ${pymeData.corporate_email}</p>
-                </div>
+            <h3>Contacto</h3>
+            <p><strong>Email:</strong> ${data.email}</p>
+            <p><strong>Teléfono:</strong> ${data.telefono}</p>
 
-                <div>
-                    <p>C.U.I.T: ${pymeData.cuit}</p>
-                    <p>Actividad Principal: ${pymeData.activity}</p>
-                    <p>N° Telefono: ${pymeData.phone_number}</p>
-                </div>
-            </div>
+            <h3>Domicilio Fiscal</h3>
+            <p><strong>Dirección:</strong> ${data.calle} ${data.piso_dpto}</p>
+            <p><strong>Ciudad:</strong> ${data.ciudad}, ${data.provincia}, ${data.pais}</p>
+            <p><strong>Código Postal:</strong> ${data.cp}</p>
 
-            <div class="infoContainer">
-                <div>
-                    <p>Calle y Número: ${pymeData.address}</p>
-                    <p>Provincia: ${pymeData.state}</p>
-                    <p>Código Postal: ${pymeData.postal_code}</p>
-                </div>
+            <h3>Detalles del Crédito</h3>
+            <p><strong>Monto Solicitado:</strong> $${parseFloat(data.monto_solicitado).toLocaleString('es-MX')}</p>
+            <p><strong>Plazo:</strong> ${data.plazo} meses</p>
+            <p><strong>Destino:</strong> ${data.destino_credito}</p>
+            <p><strong>Garantías:</strong> ${data.garantias || 'N/A'}</p>
 
-                <div>
-                    <p>Piso/Dpto: </p>
-                    <p>Ciudad/Localidad: ${pymeData.city}</p>
-                </div>
-            </div>
+            <h3>Resumen Económico</h3>
+            <p><strong>Cierre de Ejercicio:</strong> ${data.cierre_ejercicio}</p>
+            <p><strong>Ventas Anuales:</strong> $${parseFloat(data.ventas_anuales).toLocaleString('es-MX')}</p>
+            <p><strong>Activo Total:</strong> $${parseFloat(data.activo_total).toLocaleString('es-MX')}</p>
+            <p><strong>Nro. de Empleados:</strong> ${data.empleados}</p>
 
-            <div class="infoContainer">
-                <div>
-                    <p>Fecha Cierre de Ejercicio: ${solicitud.fiscal_year_closing}</p>
-                    <p>Activo Total ($): <b>${formatCurrency(solicitud.total_assets)}</b></p>
-                </div>
-
-                <div>
-                    <p>Ventas Netas Anuales ($): <b>${formatCurrency(solicitud.annual_sales)}</b></p>
-                    <p>Cant. de Empleados: ${solicitud.employees}</p>
-                </div>
-            </div>
-            <div class="actions">
-                <div>
-                    <button class="approve" data-action="approved" ${solicitud.status !== 'pending' ? 'disabled' : ''}>Aprobar</button>
-                    <button class="decline" data-action="rejected" ${solicitud.status !== 'pending' ? 'disabled' : ''}>Rechazar</button>
-                </div>
-
-                <span class="applicationStatus ${statusClass}">${solicitud.status}</span>
+            <h3>Firma Digital</h3>
+            <div style="background-color: white; border: 1px solid #ccc; border-radius: 4px; padding: 10px; margin-top: 10px; display: inline-block;">
+                <img src="${request.signature}" alt="Firma Digital" style="width: 100%; max-width: 300px;">
             </div>
         `;
-        dashboardContainer.appendChild(card);
-    });
-
-    addActionListener();
-}
-
-function addActionListener() {
-    const dashboardContainer = document.getElementById('dashboardContainer');
-    dashboardContainer.querySelectorAll('.actions button').forEach(button => {
-        button.addEventListener('click', (event) => {
-            const card = event.target.closest('.applicationCard');
-            const id = parseInt(card.dataset.id);
-            const nuevoEstado = event.target.dataset.action; 
-
-            updateSolicitudStatus(id, nuevoEstado);
-        });
-    });
-}
-
-async function updateSolicitudStatus(id, nuevoEstado) {
-    try {
-        await api.updateCreditStatus(id, nuevoEstado);
-        renderDashboard();
-        alert(`Solicitud #${id} marcada como: ${nuevoEstado}`);
-    } catch (error) {
-        console.error('Error updating credit status:', error);
-        alert('Error al actualizar el estado de la solicitud.');
+        modal.style.display = 'flex';
     }
-}
 
+    // Close modal logic
+    closeModalBtn.addEventListener('click', () => modal.style.display = 'none');
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
 
-document.addEventListener('DOMContentLoaded', async () => {
-    await setuplistCompanies();
-    setupSearchFilter();
-    
-    if (!companieActive) {
-        renderDashboard();
+    function getStatusClass(status) {
+        switch (status) {
+            case 'Aprobado': return 'status-approved';
+            case 'En Revisión': return 'status-review';
+            case 'Rechazado': return 'status-rejected';
+            default: return 'status-pending';
+        }
     }
 });
