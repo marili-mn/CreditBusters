@@ -88,13 +88,45 @@ document.addEventListener('DOMContentLoaded', function () {
     registerForm.addEventListener('submit', function(e) {
         e.preventDefault();
         masterValidator(); // Run a final check
-        if (!submitButton.disabled) {
+
+        if (submitButton.disabled) {
+            return; // Exit if form is not valid
+        }
+
+        try {
+            const name = document.getElementById('name').value;
+            const lastname = document.getElementById('lastname').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
             const messageContainer = document.getElementById('message-container');
-            messageContainer.innerHTML = '<p class="success">¡Registro exitoso! Redirigiendo al login...</p>';
+
+            const users = DB.getUsers();
+            const userExists = users.find(u => u.email === email);
+
+            if (userExists) {
+                messageContainer.innerHTML = `<p class="error">El usuario ya existe.</p>`;
+                return;
+            }
+
+            const newUser = {
+                email: email,
+                password: password,
+                role: 'user',
+                name: `${name} ${lastname}`
+            };
+            users.push(newUser);
+            DB.setUsers(users);
+
+            messageContainer.innerHTML = `<p class="success">¡Registro exitoso! Redirigiendo al login...</p>`;
             
             setTimeout(() => {
                 window.location.href = 'log-in.html';
             }, 2000);
+
+        } catch (error) {
+            const messageContainer = document.getElementById('message-container');
+            messageContainer.innerHTML = `<p class="error">Ocurrió un error durante el registro. Por favor, inténtelo de nuevo.</p>`;
+            console.error("Error en el registro:", error);
         }
     });
 });

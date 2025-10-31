@@ -42,6 +42,10 @@ const DB = {
         return JSON.parse(localStorage.getItem('users')) || [];
     },
 
+    setUsers: function(users) {
+        localStorage.setItem('users', JSON.stringify(users));
+    },
+
     getCreditRequests: function() {
         const index = this._getRequestsIndex();
         const allRequests = [];

@@ -311,17 +311,8 @@ body {
     padding: 1rem;
     border-radius: 8px;
     font-size: 0.9rem;
-}
-
-.flash-message {
-    color: #fff;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    pointer-events: auto; /* Re-enable pointer events for the message itself */
+    animation: fadeIn 0.5s ease-out;
     margin-bottom: 1rem;
-    max-width: 100%;
-    width: 420px;
-    opacity: 1;
-    transition: opacity 0.5s ease-out;
 }
 
 .message.success, .flash-message.success {
@@ -332,6 +323,16 @@ body {
 .message.error, .flash-message.error {
     background-color: var(--error-color);
     color: #fff;
+}
+
+#message-container .error {
+    color: var(--error-color);
+    font-weight: bold;
+}
+
+#message-container .success {
+    color: var(--success-color);
+    font-weight: bold;
 }
 
 /* --- SPINNER DE CARGA --- */

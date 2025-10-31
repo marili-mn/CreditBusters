@@ -16,13 +16,13 @@
         <section class="auth-card">
             <div class="auth-info">
                 <header class="auth-header">
-                    <h1 class="logo">⚡ CreditBusters</h1>
+                    <a href="../index.html" style="text-decoration: none;"><h1 class="logo">⚡ CreditBusters</h1></a>
                     <h2 data-key="register_title">Registrar nueva cuenta</h2>
                     <p data-key="register_subtitle">Finanzas inteligentes para un mundo en movimiento.</p>
                 </header>
                 <div class="auth-links">
                     <p data-key="already_have_account_text">¿Ya tienes cuenta? <a href="log-in.html" data-key="login_link">Inicia Sesión</a></p>
-                    <a href="#" class="btn btn-secondary" data-key="learn_more_link">Saber más</a>
+                    <a href="../index.html" class="btn btn-secondary" data-key="back_to_home">Volver al Home</a>
                 </div>
             </div>
             <div class="auth-form-wrapper">
@@ -46,7 +46,6 @@
                         <div class="input-group">
                             <input type="password" id="password" name="password" required>
                             <button type="button" class="btn-toggle-password" aria-label="Mostrar u ocultar contraseña"><i class="fas fa-eye"></i></button>
-                        </div>
                         <div id="password-strength-feedback" class="form-feedback-list">
                             <ul>
                                 <li data-requirement="length" data-key="password_req_length">8+ caracteres</li>
@@ -56,6 +55,7 @@
                                 <li data-requirement="special" data-key="password_req_special">1 Carácter especial (!@#)</li>
                             </ul>
                         </div>
+
                     </div>
                     <div class="form-group">
                         <label for="confirmPassword" data-key="confirm_password_label">Repetir Contraseña</label>
